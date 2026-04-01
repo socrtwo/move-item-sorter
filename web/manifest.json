@@ -1,0 +1,46 @@
+{
+  "name": "Move Item Sorter",
+  "short_name": "Move Sorter",
+  "description": "Photograph, categorize, and export your household inventory before moving day.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0D47A1",
+  "theme_color": "#1565C0",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/Icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Capture Item",
+      "short_name": "Capture",
+      "description": "Open camera to photograph a new item",
+      "url": "/camera",
+      "icons": [{"src": "icons/Icon-192.png", "sizes": "192x192"}]
+    }
+  ]
+}

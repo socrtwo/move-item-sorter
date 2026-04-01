@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Move Item Sorter
+Comment=Photograph, categorize, and export your household inventory before moving day
+Exec=move_item_sorter
+Icon=move_item_sorter
+Terminal=false
+Categories=Utility;
+Keywords=move;inventory;items;photograph;sort;
+StartupNotify=true
