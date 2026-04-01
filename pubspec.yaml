@@ -1,0 +1,99 @@
+name: move_item_sorter
+description: An inventory management app for organizing possessions before moving.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.4.10
+  riverpod_annotation: ^2.3.5
+
+  # Navigation
+  go_router: ^13.2.0
+
+  # Database
+  sqflite: ^2.3.2
+  sqflite_common_ffi: ^2.3.3   # desktop + web
+  path: ^1.9.0
+
+  # Camera
+  camera: ^0.10.5+9
+  image: ^4.1.7
+
+  # Image picking (gallery fallback)
+  image_picker: ^1.0.7
+
+  # Permissions
+  permission_handler: ^11.3.1
+
+  # Speech recognition
+  speech_to_text: ^6.6.2
+
+  # Text-to-speech
+  flutter_tts: ^3.8.5
+
+  # HTTP / API calls
+  dio: ^5.4.3+1
+  http: ^1.2.1
+
+  # File system
+  path_provider: ^2.1.3
+  file_picker: ^8.0.3
+
+  # Export formats
+  excel: ^4.0.3
+  csv: ^6.0.0
+
+  # Sharing / opening files
+  share_plus: ^9.0.0
+  open_filex: ^4.3.4
+
+  # UUID generation
+  uuid: ^4.4.0
+
+  # JSON serialization
+  json_annotation: ^4.9.0
+
+  # Local storage (settings)
+  shared_preferences: ^2.2.3
+
+  # URL launching (marketplace links)
+  url_launcher: ^6.2.6
+
+  # Image display
+  cached_network_image: ^3.3.1
+
+  # UI utilities
+  flutter_staggered_grid_view: ^0.7.0
+  badges: ^3.1.2
+  shimmer: ^3.0.0
+  intl: ^0.19.0
+  percent_indicator: ^4.2.3
+
+  # Barcode scanning
+  mobile_scanner: ^5.1.1
+
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.2
+  build_runner: ^2.4.9
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.0
+  custom_lint: ^0.6.3
+  riverpod_lint: ^2.3.10
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
