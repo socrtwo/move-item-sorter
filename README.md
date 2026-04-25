@@ -1,5 +1,10 @@
 # Move Item Sorter
 
+<!--PAGES_LINK_BANNER-->
+> 🌐 **Live page:** [https://socrtwo.github.io/move-item-sorter/](https://socrtwo.github.io/move-item-sorter/)  
+> 📦 **Releases:** [github.com/socrtwo/move-item-sorter/releases](https://github.com/socrtwo/move-item-sorter/releases)
+<!--/PAGES_LINK_BANNER-->
+
 **Cross-platform inventory management for your next move.**
 
 Photograph every item in your home, speak its destination category, and let Move Item Sorter do the rest — from organising boxes to listing items for sale across major marketplaces.
