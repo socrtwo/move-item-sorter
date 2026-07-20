@@ -1,7 +1,9 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
+    id "org.jetbrains.kotlin.android"
     // id "com.google.gms.google-services"  // Uncomment after Firebase setup
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin
+    // Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -48,7 +50,7 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Kotlin stdlib is added automatically by the Kotlin Gradle plugin.
     implementation 'androidx.multidex:multidex:2.0.1'
     // Firebase (uncomment after running flutterfire configure)
     // implementation platform('com.google.firebase:firebase-bom:32.7.0')
