@@ -1,0 +1,188 @@
+name: Release (multi-platform)
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: move-item-sorter
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Flutter Web build — also the basis for the
+  # Web / ChromeOS / iOS installable PWA bundles.
+  # ──────────────────────────────────────────────
+  web:
+    name: Web / ChromeOS / iOS (PWA)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter --version
+      - run: flutter pub get
+      - name: Build Flutter web
+        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      - name: Package PWA bundles (Web / ChromeOS / iOS)
+        run: |
+          mkdir -p dist
+          ( cd build/web && zip -r "../../dist/${APP_NAME}-web.zip" . )
+          printf 'Move Item Sorter for ChromeOS\n\nOpen the live app in Chrome and choose "Install" from the\naddress bar, or sideload the Android APK from this release.\n' > INSTALL-chromeos.txt
+          cp "dist/${APP_NAME}-web.zip" "dist/${APP_NAME}-chromeos.zip" && zip -j "dist/${APP_NAME}-chromeos.zip" INSTALL-chromeos.txt
+          printf 'Move Item Sorter for iOS / iPadOS\n\nOpen the live app in Safari, then Share -> Add to Home Screen.\n' > INSTALL-ios.txt
+          cp "dist/${APP_NAME}-web.zip" "dist/${APP_NAME}-ios.zip" && zip -j "dist/${APP_NAME}-ios.zip" INSTALL-ios.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-bundles
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # ──────────────────────────────────────────────
+  # Native Android APK
+  # ──────────────────────────────────────────────
+  android:
+    name: Android (APK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - name: Build APK
+        run: flutter build apk --release
+      - name: Stage APK
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/${APP_NAME}-android.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: dist/*.apk
+          if-no-files-found: error
+
+  # ──────────────────────────────────────────────
+  # Native Linux desktop bundle
+  # ──────────────────────────────────────────────
+  linux:
+    name: Linux (desktop)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Install Linux build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libgtk-3-dev clang cmake pkg-config liblzma-dev
+      - run: flutter config --enable-linux-desktop
+      - run: flutter pub get
+      - name: Build Linux
+        run: flutter build linux --release
+      - name: Package Linux bundle
+        run: |
+          mkdir -p dist
+          ( cd build/linux/x64/release/bundle && tar -czf "../../../../../dist/${APP_NAME}-linux-x64.tar.gz" . )
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-bundle
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  # ──────────────────────────────────────────────
+  # Native macOS desktop bundle
+  # ──────────────────────────────────────────────
+  macos:
+    name: macOS (desktop)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter config --enable-macos-desktop
+      - run: flutter pub get
+      - name: Build macOS
+        run: flutter build macos --release
+      - name: Package macOS app
+        run: |
+          mkdir -p dist
+          APP=$(find build/macos/Build/Products/Release -maxdepth 1 -name "*.app" | head -1)
+          ( cd "$(dirname "$APP")" && zip -r -y "$GITHUB_WORKSPACE/dist/${APP_NAME}-macos.zip" "$(basename "$APP")" )
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # ──────────────────────────────────────────────
+  # Native Windows desktop bundle
+  # ──────────────────────────────────────────────
+  windows:
+    name: Windows (desktop)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter config --enable-windows-desktop
+      - run: flutter pub get
+      - name: Build Windows
+        run: flutter build windows --release
+      - name: Package Windows bundle
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath "dist/${env:APP_NAME}-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-bundle
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # ──────────────────────────────────────────────
+  # Publish: collect everything and create the Release.
+  # always() so one flaky native leg never blocks shipping
+  # the platforms that did build. Restricted to v* tags /
+  # manual dispatch.
+  # ──────────────────────────────────────────────
+  release:
+    name: Create Release
+    needs: [web, android, linux, macos, windows]
+    if: |
+      always() &&
+      (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: List collected artifacts
+        run: |
+          echo "Artifacts to attach:"
+          find artifacts -type f -printf '  %p (%s bytes)\n' | sort
+          if [ -z "$(find artifacts -type f)" ]; then
+            echo "::error::No build artifacts were produced — refusing to publish an empty release." >&2
+            exit 1
+          fi
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false
