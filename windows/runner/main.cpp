@@ -7,20 +7,15 @@
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
-  // Attach to console when present (e.g., not attached to pty)
-  if (!::AttachConsole(ATTACH_PARENT_PROCESS)) {
-    // If the command line includes /help or -h, create a console window so
-    // that the help text is visible.
-    if (::wcsstr(command_line, L"--help") != nullptr ||
-        ::wcsstr(command_line, L"-h") != nullptr) {
-      ::AllocConsole();
-      ::SetConsoleOutputCP(CP_UTF8);
-    }
+  // Attach to console when present (e.g., 'flutter run') or create a
+  // new console when running with a debugger.
+  if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
+    CreateAndAttachConsole();
   }
-  if (::IsDebuggerPresent()) {
-    ::AllocConsole();
-    ::SetConsoleOutputCP(CP_UTF8);
-  }
+
+  // Initialize COM, so that it is available for use in the library and/or
+  // plugins.
+  ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
   flutter::DartProject project(L"data");
 
@@ -32,7 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 800);
-  if (!window.CreateAndShow(L"Move Item Sorter", origin, size)) {
+  if (!window.Create(L"Move Item Sorter", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);
@@ -43,5 +38,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     ::DispatchMessage(&msg);
   }
 
+  ::CoUninitialize();
   return EXIT_SUCCESS;
 }
