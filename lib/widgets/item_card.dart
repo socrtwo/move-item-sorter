@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../models/item.dart';
+import '../models/item.dart';
 import 'category_chip.dart';
 
 class ItemCard extends StatelessWidget {

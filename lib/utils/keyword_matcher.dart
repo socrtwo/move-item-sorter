@@ -1,5 +1,6 @@
 import '../models/app_settings.dart';
 import '../models/category.dart';
+import '../models/item.dart';
 
 /// Result of a voice command match.
 class VoiceCommandResult {
