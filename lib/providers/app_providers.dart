@@ -176,7 +176,7 @@ final sellRevenueProvider = FutureProvider<double>((ref) async {
   final items = await db.getAllItems(filterCategory: Category.sell);
   return items
       .where((i) => i.sellDetails?.price != null)
-      .fold(0.0, (s, i) => s + i.sellDetails!.price!);
+      .fold<double>(0.0, (s, i) => s + i.sellDetails!.price!);
 });
 
 final totalEstimatedValueProvider = FutureProvider<double>((ref) async {

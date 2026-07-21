@@ -66,7 +66,7 @@ class AiService {
   }) async {
     final condStr = condition != null ? ', condition: $condition' : '';
     final resp = await _chat(
-      'You are a pricing expert. Reply with ONLY a number (USD, no $ sign, no explanation).',
+      'You are a pricing expert. Reply with ONLY a number (USD, no \$ sign, no explanation).',
       'What is a reasonable selling price for: $itemName on $marketplace$condStr?',
       apiKey,
     );
@@ -95,7 +95,7 @@ class AiService {
     required String apiKey,
   }) async {
     final resp = await _chat(
-      'You are an insurance appraiser. Reply with ONLY a number (USD replacement value, no $ sign).',
+      'You are an insurance appraiser. Reply with ONLY a number (USD replacement value, no \$ sign).',
       'Replacement value for: $itemName',
       apiKey,
     );
