@@ -30,7 +30,7 @@ dependencies:
   image_picker: ^1.0.7
 
   # Permissions
-  permission_handler: ^11.3.1
+  permission_handler: ">=11.3.1 <14.0.0"
 
   # Speech recognition
   speech_to_text: ^6.6.2
